@@ -88,16 +88,12 @@ class AccountRepository {
     final sentSnapshot = await FirebaseFirestore.instance
         .collection(AppCollections.transactions)
         .where('fromUserId', isEqualTo: userId)
-        .orderBy('createdAt', descending: true)
-        .limit(limit)
         .get();
 
     // Buscar como receptor
     final receivedSnapshot = await FirebaseFirestore.instance
         .collection(AppCollections.transactions)
         .where('toUserId', isEqualTo: userId)
-        .orderBy('createdAt', descending: true)
-        .limit(limit)
         .get();
 
     final all = <TransactionModel>[];
@@ -124,13 +120,14 @@ class AccountRepository {
     return FirebaseFirestore.instance
         .collection(AppCollections.transactions)
         .where('fromUserId', isEqualTo: userId)
-        .orderBy('createdAt', descending: true)
-        .limit(limit)
         .snapshots()
-        .map((snap) => snap.docs
-            .map((d) =>
-                TransactionModel.fromJson(d.data(), currentUserId: userId))
-            .toList());
+        .map((snap) {
+      final list = snap.docs
+          .map((d) => TransactionModel.fromJson(d.data(), currentUserId: userId))
+          .toList();
+      list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return list.take(limit).toList();
+    });
   }
 
   // ── Helper privado ──

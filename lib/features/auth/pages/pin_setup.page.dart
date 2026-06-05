@@ -130,9 +130,17 @@ class _PinSetupPageState extends State<PinSetupPage> {
               ),
             ),
 
-            Column(
-              children: [
-                const SizedBox(height: 32),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 32),
 
                 // ── Título y subtítulo ──
                 Padding(
@@ -263,8 +271,13 @@ class _PinSetupPageState extends State<PinSetupPage> {
                   ),
                 ),
 
-                const SizedBox(height: 16),
-              ],
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),

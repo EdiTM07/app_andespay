@@ -100,9 +100,17 @@ class _TransferSuccessPageState extends State<TransferSuccessPage>
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(24),
-              child: Column(
-                children: [
-                  const SizedBox(height: 40),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 40),
 
                   // Check animado
                   FadeTransition(
@@ -256,8 +264,13 @@ class _TransferSuccessPageState extends State<TransferSuccessPage>
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                ],
+                            const SizedBox(height: 8),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ),
