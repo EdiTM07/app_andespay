@@ -20,6 +20,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
+  final _cedulaController = TextEditingController();
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -36,10 +37,7 @@ class _RegisterPageState extends State<RegisterPage>
       duration: const Duration(milliseconds: 700),
       vsync: this,
     );
-    _fadeAnim = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeOut,
-    );
+    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
     _slideAnim = Tween<Offset>(
       begin: const Offset(0, 0.08),
       end: Offset.zero,
@@ -51,6 +49,7 @@ class _RegisterPageState extends State<RegisterPage>
   @override
   void dispose() {
     _animController.dispose();
+    _cedulaController.dispose();
     _fullNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -66,6 +65,7 @@ class _RegisterPageState extends State<RegisterPage>
       email: _emailController.text,
       password: _passwordController.text,
       fullName: _fullNameController.text,
+      cedula: _cedulaController.text.trim(),
     );
 
     if (!mounted) return;
@@ -111,7 +111,10 @@ class _RegisterPageState extends State<RegisterPage>
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: AppColors.textPrimary,
+          ),
           onPressed: () => context.pop(),
         ),
       ),
@@ -144,7 +147,7 @@ class _RegisterPageState extends State<RegisterPage>
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         const SizedBox(height: 16),
-                        
+
                         Text(
                           AppStrings.registerTitle,
                           style: GoogleFonts.poppins(
@@ -161,9 +164,18 @@ class _RegisterPageState extends State<RegisterPage>
                             color: AppColors.textSecondary,
                           ),
                         ),
-                        
-                        const SizedBox(height: 40),
 
+                        const SizedBox(height: 40),
+                        SmartBankTextField(
+                          label: AppStrings.cedula,
+                          controller: _cedulaController,
+                          prefixIcon: Icons.badge_outlined,
+                          textInputAction: TextInputAction.next,
+                          validator: AppValidators.cedulaEcuador,
+                          maxLength: 10,
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 20),
                         SmartBankTextField(
                           label: AppStrings.fullName,
                           controller: _fullNameController,

@@ -72,6 +72,7 @@ class AuthProvider extends ChangeNotifier {
     required String email,
     required String password,
     required String fullName,
+    String? cedula,
   }) async {
     _setStatus(AuthStatus.loading);
     _errorMessage = null;
@@ -81,6 +82,7 @@ class AuthProvider extends ChangeNotifier {
         email: email,
         password: password,
         fullName: fullName,
+        cedula: cedula,
       );
       _setStatus(AuthStatus.authenticated);
       return true;
@@ -147,6 +149,7 @@ class AuthProvider extends ChangeNotifier {
     required String uid,
     required String fullName,
     String? phoneNumber,
+    String? cedula,
   }) async {
     _setStatus(AuthStatus.loading);
     _errorMessage = null;
@@ -156,6 +159,7 @@ class AuthProvider extends ChangeNotifier {
         uid: uid,
         fullName: fullName,
         phoneNumber: phoneNumber,
+        cedula: cedula,
       );
       
       // Recargar perfil

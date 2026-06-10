@@ -8,6 +8,8 @@ import 'package:app_banco/core/widgets/smartbank_button.dart';
 import 'package:app_banco/core/widgets/smartbank_text_field.dart';
 import 'package:app_banco/features/auth/providers/auth.provider.dart';
 
+import '../../../core/utils/validators.dart';
+
 /// Pantalla para editar la información del perfil del usuario
 class ProfileEditPage extends StatefulWidget {
   const ProfileEditPage({super.key});
@@ -20,20 +22,27 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _fullNameController;
   late TextEditingController _phoneNumberController;
+  late TextEditingController _cedulaController;
   bool _isSaving = false;
+  bool _hasCedula = false;
 
   @override
   void initState() {
     super.initState();
     final user = context.read<AuthProvider>().currentUser;
     _fullNameController = TextEditingController(text: user?.fullName ?? '');
-    _phoneNumberController = TextEditingController(text: user?.phoneNumber ?? '');
+    _phoneNumberController = TextEditingController(
+      text: user?.phoneNumber ?? '',
+    );
+    _cedulaController = TextEditingController(text: user?.cedula ?? '');
+    _hasCedula = (user?.cedula != null && user!.cedula!.trim().isNotEmpty);
   }
 
   @override
   void dispose() {
     _fullNameController.dispose();
     _phoneNumberController.dispose();
+    _cedulaController.dispose();
     super.dispose();
   }
 
@@ -51,6 +60,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         uid: user.uid,
         fullName: _fullNameController.text.trim(),
         phoneNumber: _phoneNumberController.text.trim(),
+        cedula: _cedulaController.text.trim(),
       );
 
       if (!mounted) return;
@@ -58,11 +68,15 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Perfil actualizado correctamente',
-                style: GoogleFonts.poppins(color: Colors.white, fontSize: 13)),
+            content: Text(
+              'Perfil actualizado correctamente',
+              style: GoogleFonts.poppins(color: Colors.white, fontSize: 13),
+            ),
             backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             margin: const EdgeInsets.all(16),
           ),
         );
@@ -70,17 +84,21 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error al actualizar el perfil.',
-                style: GoogleFonts.poppins(color: Colors.white, fontSize: 13)),
+            content: Text(
+              'Error al actualizar el perfil.',
+              style: GoogleFonts.poppins(color: Colors.white, fontSize: 13),
+            ),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             margin: const EdgeInsets.all(16),
           ),
         );
       }
     }
-    
+
     if (mounted) {
       setState(() => _isSaving = false);
     }
@@ -94,14 +112,19 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              color: AppColors.primary, size: 20),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: AppColors.primary,
+            size: 20,
+          ),
           onPressed: () => context.pop(),
         ),
         title: Text(
           'Editar Perfil',
           style: GoogleFonts.poppins(
-              color: AppColors.textPrimary, fontWeight: FontWeight.w600),
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
       ),
@@ -118,7 +141,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   children: [
                     CircleAvatar(
                       radius: 50,
-                      backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+                      backgroundColor: AppColors.primary.withValues(
+                        alpha: 0.15,
+                      ),
                       child: Text(
                         _fullNameController.text.isNotEmpty
                             ? _fullNameController.text[0].toUpperCase()
@@ -140,8 +165,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white, width: 2),
                         ),
-                        child: const Icon(Icons.camera_alt_rounded,
-                            color: Colors.white, size: 16),
+                        child: const Icon(
+                          Icons.camera_alt_rounded,
+                          color: Colors.white,
+                          size: 16,
+                        ),
                       ),
                     ),
                   ],
@@ -165,6 +193,18 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 ),
                 child: Column(
                   children: [
+                    SmartBankTextField(
+                      label: 'Cedula',
+                      controller: _cedulaController,
+                      prefixIcon: Icons.person_outline_rounded,
+                      keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.next,
+                      validator: AppValidators.cedulaEcuador,
+                      maxLength: 10,
+                      enabled: !_hasCedula,
+                    ),
+                    const SizedBox(height: 16),
+
                     SmartBankTextField(
                       label: 'Nombre completo',
                       controller: _fullNameController,

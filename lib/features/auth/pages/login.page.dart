@@ -35,10 +35,7 @@ class _LoginPageState extends State<LoginPage>
       duration: const Duration(milliseconds: 700),
       vsync: this,
     );
-    _fadeAnim = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeOut,
-    );
+    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
     _slideAnim = Tween<Offset>(
       begin: const Offset(0, 0.08),
       end: Offset.zero,
@@ -162,28 +159,12 @@ class _LoginPageState extends State<LoginPage>
                         Center(
                           child: Column(
                             children: [
-                              Container(
-                                width: 80,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                  gradient: AppColors.primaryGradient,
-                                  borderRadius: BorderRadius.circular(22),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.primary
-                                          .withValues(alpha: 0.35),
-                                      blurRadius: 24,
-                                      offset: const Offset(0, 10),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.account_balance_rounded,
-                                  size: 40,
-                                  color: Colors.white,
-                                ),
+                              Image.asset(
+                                'assets/img/LogoAndesPay.png',
+                                width: 120,
+                                height: 120,
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 10),
                               Text(
                                 AppStrings.appName,
                                 style: GoogleFonts.poppins(
@@ -263,8 +244,9 @@ class _LoginPageState extends State<LoginPage>
                           children: [
                             const Expanded(child: Divider()),
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               child: Text(
                                 'o',
                                 style: GoogleFonts.poppins(
@@ -282,7 +264,10 @@ class _LoginPageState extends State<LoginPage>
                         // ── Botón Google ──
                         OutlinedButton.icon(
                           onPressed: () => _onGooglePressed(auth),
-                          icon: const Icon(Icons.g_mobiledata_rounded, size: 32),
+                          icon: const Icon(
+                            Icons.g_mobiledata_rounded,
+                            size: 32,
+                          ),
                           label: Text(
                             AppStrings.googleSignIn,
                             style: GoogleFonts.poppins(
@@ -294,7 +279,9 @@ class _LoginPageState extends State<LoginPage>
                             foregroundColor: AppColors.textPrimary,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             side: BorderSide(
-                              color: AppColors.textSecondary.withValues(alpha: 0.2),
+                              color: AppColors.textSecondary.withValues(
+                                alpha: 0.2,
+                              ),
                               width: 1.5,
                             ),
                             shape: RoundedRectangleBorder(

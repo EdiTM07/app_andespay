@@ -44,6 +44,7 @@ class AuthRepository {
     required String email,
     required String password,
     required String fullName,
+    String? cedula,
   }) async {
     final credential = await _authService.registerWithEmail(
       email: email,
@@ -56,6 +57,7 @@ class AuthRepository {
       uid: credential.user!.uid,
       fullName: fullName,
       email: email,
+      cedula: cedula,
       createdAt: DateTime.now(),
       isActive: true,
     );
@@ -158,12 +160,16 @@ class AuthRepository {
     required String uid,
     required String fullName,
     String? phoneNumber,
+    String? cedula,
   }) async {
     final Map<String, dynamic> data = {
       'fullName': fullName,
     };
     if (phoneNumber != null && phoneNumber.isNotEmpty) {
       data['phoneNumber'] = phoneNumber;
+    }
+    if (cedula != null && cedula.isNotEmpty) {
+      data['cedula'] = cedula;
     }
 
     await _firestoreService.updateDocument(

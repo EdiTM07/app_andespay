@@ -101,10 +101,10 @@ class _WelcomePageState extends State<WelcomePage>
                             ),
                           ],
                         ),
-                        child: const Icon(
-                          Icons.account_balance_rounded,
-                          size: 64,
-                          color: AppColors.primary,
+                        child: Image.asset(
+                          'assets/img/LogoAndesPay.png',
+                          width: 128,
+                          height: 128,
                         ),
                       ),
                       const SizedBox(height: 24),
