@@ -37,12 +37,22 @@ dependencies:
   # QR
   qr_flutter: ^4.1.0
   mobile_scanner: ^5.2.3
-
+  fl_chart: ^1.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+
+  image_path: "assets/icons/app_icon.png"
+
+  min_sdk_android: 21
 
 flutter:
   uses-material-design: true
@@ -51,4 +61,3 @@ flutter:
     - assets/img/
     - assets/img/onboarding/
     - assets/icons/
-

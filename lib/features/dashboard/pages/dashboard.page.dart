@@ -8,6 +8,7 @@ import 'package:app_banco/features/auth/providers/auth.provider.dart';
 import 'package:app_banco/features/dashboard/widgets/balance_card.widget.dart';
 import 'package:app_banco/features/dashboard/widgets/quick_actions.widget.dart';
 import 'package:app_banco/features/dashboard/widgets/recent_transactions.widget.dart';
+import 'package:app_banco/features/notifications/providers/notification.provider.dart';
 
 /// Pantalla principal del usuario autenticado en AndesPay
 class DashboardPage extends StatefulWidget {
@@ -42,6 +43,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     final accountProv = context.watch<AccountProvider>();
+    final notifProv = context.watch<NotificationProvider>();
 
     final firstName = auth.currentUser?.fullName.split(' ').first ?? 'Usuario';
 
@@ -89,10 +91,15 @@ class _DashboardPageState extends State<DashboardPage> {
                     children: [
                       IconButton(
                         onPressed: () => context.push('/notifications'),
-                        icon: const Icon(
-                          Icons.notifications_outlined,
-                          color: AppColors.textPrimary,
-                          size: 24,
+                        icon: Badge(
+                          isLabelVisible: notifProv.unreadCount > 0,
+                          label: Text('${notifProv.unreadCount}'),
+                          backgroundColor: AppColors.error,
+                          child: const Icon(
+                            Icons.notifications_outlined,
+                            color: AppColors.textPrimary,
+                            size: 24,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 4),

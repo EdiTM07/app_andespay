@@ -39,7 +39,17 @@ lib/
 1. Asegúrate de tener **Flutter SDK** (>= 3.0.0) instalado.
 2. Clona este repositorio y navega a su directorio.
 3. Ejecuta `flutter pub get` para instalar dependencias.
-4. El proyecto utiliza **Firebase**. Debes generar y agregar los archivos `google-services.json` (Android) y/o `GoogleService-Info.plist` (iOS) en sus respectivas carpetas utilizando **FlutterFire CLI** (`flutterfire configure`).
+4. **Configuración de Firebase (Importante):** Por seguridad, los archivos de conexión a la base de datos están excluidos del repositorio (`.gitignore`). Una vez clonado el proyecto, debes restaurarlos de una de estas dos maneras:
+   - **Opción A (Recomendada - Vía CLI):**
+     - Instala Firebase CLI (`curl -sL https://firebase.tools | bash` o vía npm).
+     - Instala FlutterFire CLI: `dart pub global activate flutterfire_cli`. *(En Linux/Mac, asegúrate de tener `~/.pub-cache/bin` en tu PATH).*
+     - Inicia sesión: `firebase login`
+     - Ejecuta: `flutterfire configure` (Selecciona tu proyecto existente para que regenere los archivos locales).
+   - **Opción B (Manual):**
+     - Copia tus archivos de configuración previamente respaldados en las siguientes rutas:
+       - `lib/firebase_options.dart`
+       - `android/app/google-services.json`
+       - `ios/Runner/GoogleService-Info.plist` (si usas iOS)
 5. (Opcional) Si configuras Firestore, asegúrate de aplicar las reglas de seguridad provistas en `firestore.rules`.
 6. Ejecuta `flutter run` para probar en tu emulador o dispositivo físico.
 

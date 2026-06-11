@@ -4,8 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:app_banco/core/constants/app.colors.dart';
 import 'package:app_banco/core/utils/formatters.dart';
 import 'package:app_banco/features/auth/providers/auth.provider.dart';
+import 'package:app_banco/features/accounts/providers/account.provider.dart';
 import 'package:app_banco/features/notifications/models/notification.model.dart';
 import 'package:app_banco/features/notifications/providers/notification.provider.dart';
+import 'package:app_banco/features/notifications/widgets/expenses_chart.widget.dart';
 
 /// Pantalla que muestra el historial de notificaciones del usuario
 class NotificationsPage extends StatefulWidget {
@@ -22,7 +24,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final auth = context.read<AuthProvider>();
       if (auth.currentUser != null) {
-        context.read<NotificationProvider>().loadNotifications(auth.currentUser!.uid);
+        context.read<NotificationProvider>().loadNotifications(
+          auth.currentUser!.uid,
+        );
       }
     });
   }
@@ -57,6 +61,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Widget build(BuildContext context) {
     final provider = context.watch<NotificationProvider>();
     final auth = context.watch<AuthProvider>();
+    final accountProv = context.watch<AccountProvider>();
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
@@ -64,7 +69,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          'Notificaciones',
+          'Alertas y Gastos',
           style: GoogleFonts.poppins(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -89,37 +94,67 @@ class _NotificationsPageState extends State<NotificationsPage> {
             ),
         ],
       ),
-      body: provider.isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-          : provider.notifications.isEmpty
-              ? _EmptyNotifications()
-              : RefreshIndicator(
-                  color: AppColors.primary,
-                  onRefresh: () async {
-                    if (auth.currentUser != null) {
-                      await provider.loadNotifications(auth.currentUser!.uid);
-                    }
-                  },
-                  child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    itemCount: provider.notifications.length,
-                    separatorBuilder: (context, _) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final notif = provider.notifications[index];
-                      return _NotificationTile(
-                        notification: notif,
-                        icon: _getIconForType(notif.type),
-                        color: _getColorForType(notif.type),
-                        onTap: () {
-                          if (!notif.isRead) {
-                            provider.markAsRead(notif.id);
-                          }
-                          // Si quisiéramos navegación según el tipo, se haría aquí.
-                        },
-                      );
-                    },
+      body: provider.isLoading || accountProv.isLoading
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
+          : RefreshIndicator(
+              color: AppColors.primary,
+              onRefresh: () async {
+                if (auth.currentUser != null) {
+                  await Future.wait([
+                    provider.loadNotifications(auth.currentUser!.uid),
+                    accountProv.refreshTransactions(auth.currentUser!.uid),
+                  ]);
+                }
+              },
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  // ── Gráfico de Gastos ──
+                  ExpensesChartWidget(
+                    transactions: accountProv.recentTransactions,
                   ),
-                ),
+                  const SizedBox(height: 32),
+
+                  // ── Título de Notificaciones ──
+                  Text(
+                    'Historial de Alertas',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // ── Lista de Notificaciones ──
+                  if (provider.notifications.isEmpty)
+                    _EmptyNotifications()
+                  else
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: provider.notifications.length,
+                      separatorBuilder: (context, _) =>
+                          const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final notif = provider.notifications[index];
+                        return _NotificationTile(
+                          notification: notif,
+                          icon: _getIconForType(notif.type),
+                          color: _getColorForType(notif.type),
+                          onTap: () {
+                            if (!notif.isRead) {
+                              provider.markAsRead(notif.id);
+                            }
+                          },
+                        );
+                      },
+                    ),
+                ],
+              ),
+            ),
     );
   }
 }
@@ -183,7 +218,9 @@ class _NotificationTile extends StatelessWidget {
                           notification.title,
                           style: GoogleFonts.poppins(
                             fontSize: 15,
-                            fontWeight: isRead ? FontWeight.w600 : FontWeight.w700,
+                            fontWeight: isRead
+                                ? FontWeight.w600
+                                : FontWeight.w700,
                             color: AppColors.textPrimary,
                           ),
                         ),

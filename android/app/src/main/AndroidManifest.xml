@@ -2,7 +2,7 @@
     <!-- Permiso de cámara requerido por mobile_scanner (QR) -->
     <uses-permission android:name="android.permission.CAMERA" />
     <application
-        android:label="app_banco"
+        android:label="Andes Pay"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
